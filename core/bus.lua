@@ -14,6 +14,7 @@ return {make_bus=function(ENV)
                     color={1,1,1,1},
                     blending={mode="alpha",alphamode="alphamultiply"},
                     point_size=1,
+                    translate={0,0}
                 }
             }
         }

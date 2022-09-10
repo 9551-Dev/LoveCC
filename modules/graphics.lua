@@ -6,8 +6,6 @@ local clr = require("common.color_util")
 local UNPACK = table.unpack
 local CEIL = math.ceil
 
-_G.vals = {}
-
 return function(BUS)
 
     BUS.clr_instance = clr
@@ -18,27 +16,36 @@ return function(BUS)
         return stack[stack.current_pos]
     end
 
+    local function apply_transfomations(x,y)
+        local stck = get_stack()
+        return
+            x + stck.translate[1],
+            y + stck.translate[2]
+    end
+
     local function blend_colors(existing,additional)
         local blend = stack[stack.current_pos].blending
         return clr.blend[blend.mode][blend.alphamode](existing,additional)
     end
 
     local function add_color_xy(x,y,c)
+        local x,y = apply_transfomations(x,y)
+        x = CEIL(x-0.5)
+        y = CEIL(y-0.5)
         if x>0 and y>0 and x<BUS.graphics.w and y<BUS.graphics.h then
             local bpos = BUS.graphics.buffer[y]
             bpos[x] = blend_colors(bpos[x],c)
         end
     end
 
-    local function apply_transfomations(x,y)
-    end
-
     function graphics.isActive() return true end
     function graphics.origin()
+        local stck = get_stack()
+        stck.translate = tbl.deepcopy(stack.default.translate)
+
         --love.graphics.scale
         --love.graphics.rotate
         --love.graphics.shrear
-        --love.graphics.stranslate
     end
 
     function graphics.makeDefault()
@@ -102,10 +109,15 @@ return function(BUS)
         local stck = get_stack()
         stck.point_size = size
     end
-
     function graphics.getPointSize()
         local stck = get_stack()
         return stck.point_size
     end
+
+    function graphics.translate(dx,dy)
+        local stck = get_stack()
+        stck.translate = {dx,dy}
+    end
+
     return graphics
 end

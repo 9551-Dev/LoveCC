@@ -21,7 +21,7 @@ return {make=function(ENV,BUS,args)
                     table.remove(BUS.frames,1)
                 else break end
             end
-            generic.precise_sleep(0.01)
+            generic.precise_sleep(0.05)
         end
     end)
 end}
