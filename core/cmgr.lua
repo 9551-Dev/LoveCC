@@ -22,7 +22,7 @@ function lib_cmgr.start(toggle,thread_pointer,main_thread,...)
             local ok,ret = coroutine.resume(main_thread,unpack_ev(ev))
             if ok then main_filter = ret end
             if not ok and coroutine.status(main_thread) == "dead" then
-                error("Error in main thread"..newline..tostring(ret),0)
+                e = "Error in main thread"..newline..tostring(ret)
             end
         end
         for k,v in pairs(static_threads) do
@@ -50,7 +50,8 @@ function lib_cmgr.start(toggle,thread_pointer,main_thread,...)
             end
         end
     end
-    if toggle() then error(e,0) end
+    if toggle() then return false,e end
+    return true
 end
 
 return lib_cmgr

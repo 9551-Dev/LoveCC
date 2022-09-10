@@ -14,11 +14,12 @@ return function(ENV,...)
     BUS.graphics.stack[BUS.graphics.stack.current_pos] = 
         ENV.utils.table.deepcopy(BUS.graphics.stack.default)
 
-    local function start_execution(program,path,terminal,parent)
+    local function start_execution(program,path,terminal,parent,ox,oy)
         local w,h = terminal.getSize()
         BUS.graphics.w,BUS.graphics.h = w*2,h*3
         BUS.graphics.display = pixelbox.new(terminal)
         BUS.graphics.display_source = terminal
+        BUS.graphics.event_offset = vector.new(ox,oy)
         BUS.clr_instance.update_palette(terminal)
         for x,y in ENV.utils.table.map_iterator(BUS.graphics.w,BUS.graphics.h) do
             BUS.graphics.buffer[y][x] = {0,0,0,1}
@@ -37,9 +38,17 @@ return function(ENV,...)
         local event  = event_thread .make(ENV,BUS,args)
         local resize = resize_thread.make(ENV,BUS,parent)
 
-        cmgr.start(function()
+        local ok,err = cmgr.start(function()
             return BUS.running
         end,{},main,event,resize)
+
+        if not ok and ENV.love.errorhandler then
+            if ENV.love.errorhandler(err) then
+                error(err,2)
+            end
+        elseif not ok then
+            error(err,2)
+        end
     end
 
     ENV.love.timer    = require("modules.timer")   (BUS)

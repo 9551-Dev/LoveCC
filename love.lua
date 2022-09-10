@@ -5,7 +5,7 @@ local terminal = window.create(term.current(),1,1,term.getSize())
 local ok,LoveCCData = pcall(require,"LoveCC")
 if not ok then error("LoveCC could not be loaded \n"..LoveCCData,0) end
 
-local init_win = LoveCCData.util.window.get_parent_info(terminal)
+local init_win,ox,oy = LoveCCData.util.window.get_parent_info(terminal)
 local advice_api = "https://api.adviceslip.com/advice"
 
 local function error_screen(err,is_lovecc)
@@ -140,7 +140,7 @@ local ok,err = pcall(function()
             local fl = fs.open(full_path,"r")
             local data = fl.readAll()
             fl.close()
-            local ok,err = pcall(LoveCCData.env,loadfile(full_path),full_path,terminal,init_win)
+            local ok,err = pcall(LoveCCData.env,loadfile(full_path),full_path,terminal,init_win,ox,oy)
             if not ok then error_screen("Runtime error: " .. tostring(err)) end
         else
             error_screen("Loading error: No code to run\nmake sure you have a main.lua file on the top level of the folder")
