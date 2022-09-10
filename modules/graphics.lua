@@ -119,5 +119,19 @@ return function(BUS)
         stck.translate = {dx,dy}
     end
 
+    function graphics.push()
+        local pos = stack.current_pos
+        stack.current_pos = pos + 1
+        stack[pos+1] = tbl.deepcopy(stack[pos])
+    end
+    function graphics.pop()
+        local pos = stack.current_pos
+        stack[pos] = nil
+        stack.current_pos = pos - 1
+    end
+    function graphics.getStackDepth()
+        return #stack
+    end
+
     return graphics
 end
