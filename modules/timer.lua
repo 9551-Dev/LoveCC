@@ -19,10 +19,10 @@ return function(BUS)
     end
 
     function timer.getTime()
-        if config then
-            return math.ceil(os.epoch("nano")/1000)
+        if _G.config then
+            return os.epoch("nano")/1000000000
         else
-            return os.epoch("utc")*1000
+            return os.epoch("utc")/1000
         end
     end
 
