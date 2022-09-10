@@ -25,4 +25,6 @@ local runtime_env = setmetatable({
 
 local ok,err = pcall(require("main"),runtime_env,...)
 
+package.path = old_path
+
 return {init_ok=ok,env=err,util=utils}
