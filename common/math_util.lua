@@ -1,0 +1,3 @@
+local maths = {}
+
+return maths
