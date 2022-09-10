@@ -1,5 +1,6 @@
 local timer = {}
 local generic = require("common.generic")
+local is_craftos = _HOST:find("CraftOS%-PC")
 
 return function(BUS)
     function timer.step()
@@ -19,7 +20,7 @@ return function(BUS)
     end
 
     function timer.getTime()
-        if _G.config then
+        if is_craftos then
             return os.epoch("nano")/1000000000
         else
             return os.epoch("utc")/1000
