@@ -6,6 +6,8 @@ local clr = require("common.color_util")
 local UNPACK = table.unpack
 local CEIL = math.ceil
 
+_G.vals = {}
+
 return function(BUS)
 
     BUS.clr_instance = clr
@@ -33,6 +35,13 @@ return function(BUS)
 
     function graphics.isActive() return true end
     function graphics.origin()
+        --love.graphics.scale
+        --love.graphics.rotate
+        --love.graphics.shrear
+        --love.graphics.stranslate
+    end
+
+    function graphics.makeDefault()
         stack[stack.current_pos] = tbl.deepcopy(stack.default)
     end
 
@@ -72,8 +81,8 @@ return function(BUS)
         for i=1,#points,2 do
             for a=1,stck.point_size do for b=1,stck.point_size do
                 add_color_xy(
-                    points[i]-p_offset+a,
-                    points[i+1]-p_offset+b
+                    CEIL(points[i]-p_offset+a-0.5),
+                    CEIL(points[i+1]-p_offset+b-0.5)
                 ,c)
             end end
         end
