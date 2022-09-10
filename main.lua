@@ -1,6 +1,7 @@
 local pixelbox = require("lib.pixelbox")
 
 local cmgr = require("core.cmgr")
+local bus = require("core.bus")
 
 local update_thread = require("core.threads.update_thread")
 local event_thread  = require("core.threads.event_thread")
@@ -8,25 +9,8 @@ local resize_thread = require("core.threads.resize_thread")
 
 return function(ENV,...)
     local args = table.pack(...)
-    local BUS = {
-        timer={last_delta=0,temp_delta=0},
-        love=ENV.love,
-        frames={},
-        events={},
-        running=true,
-        graphics={
-            buffer=ENV.utils.table.createNDarray(1),
-            stack = {
-                current_pos=1,
-                default={
-                    background_color={0,0,0,1},
-                    color={1,1,1,1},
-                    blending={mode="alpha",alphamode="alphamultiply"},
-                    point_size=1,
-                }
-            }
-        }
-    }
+    local BUS = bus.make_bus(ENV)
+
     BUS.graphics.stack[BUS.graphics.stack.current_pos] = 
         ENV.utils.table.deepcopy(BUS.graphics.stack.default)
 
