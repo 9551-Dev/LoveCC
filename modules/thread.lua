@@ -4,6 +4,15 @@ local object = require("core.object")
 
 local thread = {}
 
+local function is_code(input)
+    local _,newlines   = input:gsub("\n","\n")
+    local _,semicolons = input:gsub(";",";")
+    local _,spaces     = input:gsub(" "," ")
+    if newlines > 1 or semicolons > 1 or spaces > 1 or #input > 1024 then
+        return true
+    else return false end
+end
+
 return function(BUS)
     local objects = {
         thread={__index=object.new{
@@ -25,6 +34,14 @@ return function(BUS)
 
     function thread.newThread(code)
         local id = generic.uuid4()
+
+        if not is_code(code) then
+            local selected_path = fs.combine(BUS.instance.gamedir,code)
+            local file,reason = fs.open(selected_path,"r")
+            if file then
+                code = file.readAll()
+            else return false,reason end
+        end
 
         local func,msg = load(code or "","Thread error","t",BUS.ENV)
 

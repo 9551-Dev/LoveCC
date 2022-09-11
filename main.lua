@@ -30,6 +30,7 @@ return function(ENV,libdir,...)
         BUS.graphics.display_source = terminal
         BUS.graphics.event_offset = vector.new(ox,oy)
         BUS.clr_instance.update_palette(terminal)
+        BUS.instance.gamedir = fs.getDir(path) or ""
         for x,y in ENV.utils.table.map_iterator(BUS.graphics.w,BUS.graphics.h) do
             BUS.graphics.buffer[y][x] = {0,0,0,1}
         end
@@ -37,7 +38,7 @@ return function(ENV,libdir,...)
             local old_path = package.path
             ENV.package.path = string.format(
                 "/%s/modules/required/?.lua;/%s/?.lua;/rom/modules/main/?.lua",
-                libdir,fs.getDir(path) or ""
+                libdir,BUS.instance.gamedir
             )
             setfenv(program[1],ENV)(table.unpack(args,1,args.n))
             ENV.package.path = old_path

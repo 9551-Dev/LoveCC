@@ -31,6 +31,7 @@ return {register_bus=function(ENV)
         thread={
             chanel={},
             coro={}
-        }
+        },
+        instance={}
     }
 end}
