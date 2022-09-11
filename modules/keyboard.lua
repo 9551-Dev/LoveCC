@@ -34,7 +34,7 @@ return function(BUS)
                 return false
             end
         end
-        return false
+        return true
     end
 
     keyboard.isScancodeDown = keyboard.isDown
