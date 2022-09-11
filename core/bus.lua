@@ -1,4 +1,4 @@
-return {make_bus=function(ENV)
+return {register_bus=function(ENV)
     return {
         timer={last_delta=0,temp_delta=0},
         love=ENV.love,
@@ -17,6 +17,14 @@ return {make_bus=function(ENV)
                     translate={0,0}
                 }
             }
+        },
+        mouse={last_x=0,last_y=0},
+        window={
+            active=true
+        },
+        keyboard={
+            key_reapeat=false,
+            pressed_keys={}
         }
     }
 end}

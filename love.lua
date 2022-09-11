@@ -140,7 +140,7 @@ local ok,err = pcall(function()
             local fl = fs.open(full_path,"r")
             local data = fl.readAll()
             fl.close()
-            local ok,err = pcall(LoveCCData.env,loadfile(full_path),full_path,terminal,init_win,ox,oy)
+            local ok,err = pcall(LoveCCData.env,{loadfile(full_path)},full_path,terminal,init_win,ox,oy)
             if not ok then error_screen("Runtime error: " .. tostring(err)) end
         else
             error_screen("Loading error: No code to run\nmake sure you have a main.lua file on the top level of the folder")

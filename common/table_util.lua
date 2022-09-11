@@ -84,4 +84,12 @@ function tbls.map_iterator(w,h)
     end)
 end
 
+function tbls.reverse_table(tbl)
+    local sol = {}
+    for k,v in pairs(tbl) do
+        sol[#tbl-k+1] = v
+    end
+    return sol
+end
+
 return tbls

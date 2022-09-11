@@ -38,7 +38,7 @@ return function(BUS)
         end
     end
 
-    function graphics.isActive() return true end
+    function graphics.isActive() return BUS.window.active end
     function graphics.origin()
         local stck = get_stack()
         stck.translate = tbl.deepcopy(stack.default.translate)

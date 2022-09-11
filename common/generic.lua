@@ -30,7 +30,8 @@ generic.events_with_cords = {
     mouse_click=true,
     mouse_drag=true,
     mouse_scroll=true,
-    mouse_up=true
+    mouse_up=true,
+    mouse_move=true
 }
 
 return generic
