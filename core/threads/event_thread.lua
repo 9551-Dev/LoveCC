@@ -36,7 +36,7 @@ return {make=function(ENV,BUS,args)
             if ev[1] == keyreleased.ev then keyreleased.run(BUS,ENV.love,unpack_ev(ev)) end
             if ev[1] == textinput.ev then textinput.run(BUS,ENV.love,unpack_ev(ev)) end
 
-            --if ev[1] == mousemoved.ev then mousemoved.run(BUS,ENV.love,unpack_ev(ev)) end
+            if ev[1] == mousemoved.ev then mousemoved.run(BUS,ENV.love,unpack_ev(ev)) end
             if ev[1] == mousepressed.ev then mousepressed.run(BUS,ENV.love,unpack_ev(ev)) end
             if ev[1] == mousereleased.ev then mousereleased.run(BUS,ENV.love,unpack_ev(ev)) end
             if ev[1] == wheelmoved.ev then wheelmoved.run(BUS,ENV.love,unpack_ev(ev)) end
