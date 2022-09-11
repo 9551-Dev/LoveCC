@@ -24,7 +24,8 @@ return {register_bus=function(ENV)
         },
         keyboard={
             key_reapeat=false,
-            pressed_keys={}
+            pressed_keys={},
+            textinput=true
         }
     }
 end}

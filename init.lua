@@ -1,4 +1,3 @@
-local love = {}
 local selfDir = fs.getDir(select(2,...) or "")
 
 local old_path = package.path
@@ -19,7 +18,7 @@ local utils = {
 }
 
 local runtime_env = setmetatable({
-    love=love,
+    love={},
     utils=utils
 },{__index=_ENV})
 

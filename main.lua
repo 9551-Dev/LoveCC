@@ -65,6 +65,7 @@ return function(ENV,libdir,...)
     ENV.love.timer    = require("modules.timer")   (BUS)
     ENV.love.event    = require("modules.event")   (BUS)
     ENV.love.graphics = require("modules.graphics")(BUS)
+    ENV.love.keyboard = require("modules.keyboard")(BUS)
 
     require("modules.love")(BUS)
 
