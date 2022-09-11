@@ -5,9 +5,12 @@ return {ev="mouse_scroll",run=function(BUS,caller,ev,dir,x,y)
 
     mouse_moved:check_change(BUS,caller,x,y)
 
-    BUS.events[#BUS.events+1] = {"wheelmoved",0,0-dir}
-
     local shift_held = k_list[keys.leftShift] or k_list[keys.rightShift]
+
+    BUS.events[#BUS.events+1] = {"wheelmoved",
+        shift_held and 0-dir or 0,
+        shift_held and 0     or 0-dir
+    }
 
     if type(caller.wheelmoved) == "function" then
         caller.wheelmoved(
