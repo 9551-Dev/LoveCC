@@ -23,7 +23,7 @@ local runtime_env = setmetatable({
     utils=utils
 },{__index=_ENV})
 
-local ok,err = pcall(require("main"),runtime_env,...)
+local ok,err = pcall(require("main"),runtime_env,selfDir,...)
 
 package.path = old_path
 

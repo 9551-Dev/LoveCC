@@ -9,7 +9,7 @@ local event_thread  = require("core.threads.event_thread")
 local resize_thread = require("core.threads.resize_thread")
 local key_thread    = require("core.threads.key_thread")
 
-return function(ENV,...)
+return function(ENV,libdir,...)
     local args = table.pack(...)
     local BUS = bus.register_bus(ENV)
 
@@ -35,8 +35,8 @@ return function(ENV,...)
         if type(program[1]) == "function" then
             local old_path = package.path
             ENV.package.path = string.format(
-                "/%s/?.lua;/rom/modules/main/?.lua",
-                fs.getDir(path) or ""
+                "/%s/modules/required/?.lua;/%s/?.lua;/rom/modules/main/?.lua",
+                libdir,fs.getDir(path) or ""
             )
             setfenv(program[1],ENV)(table.unpack(args,1,args.n))
             ENV.package.path = old_path
