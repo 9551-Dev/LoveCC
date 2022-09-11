@@ -2,6 +2,7 @@ return {register_bus=function(ENV)
     return {
         timer={last_delta=0,temp_delta=0},
         love=ENV.love,
+        ENV=ENV,
         frames={},
         events={},
         running=true,
@@ -26,6 +27,10 @@ return {register_bus=function(ENV)
             key_reapeat=false,
             pressed_keys={},
             textinput=true
+        },
+        thread={
+            chanel={},
+            coro={}
         }
     }
 end}

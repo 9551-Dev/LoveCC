@@ -8,6 +8,7 @@ local update_thread = require("core.threads.update_thread")
 local event_thread  = require("core.threads.event_thread")
 local resize_thread = require("core.threads.resize_thread")
 local key_thread    = require("core.threads.key_thread")
+local tudp_thread   = require("core.threads.tupd_thread")
 
 return function(ENV,libdir,...)
     local args = table.pack(...)
@@ -48,10 +49,11 @@ return function(ENV,libdir,...)
         local event  = event_thread .make(ENV,BUS,args)
         local resize = resize_thread.make(ENV,BUS,parent)
         local key_h  = key_thread   .make(ENV,BUS)
+        local tudp   = tudp_thread  .make(ENV,BUS)
 
         local ok,err = cmgr.start(function()
             return BUS.running
-        end,{},main,event,resize,key_h)
+        end,{},main,event,resize,key_h,tudp)
 
         if not ok and ENV.love.errorhandler then
             if ENV.love.errorhandler(err) then
@@ -66,6 +68,7 @@ return function(ENV,libdir,...)
     ENV.love.event    = require("modules.event")   (BUS)
     ENV.love.graphics = require("modules.graphics")(BUS)
     ENV.love.keyboard = require("modules.keyboard")(BUS)
+    ENV.love.thread   = require("modules.thread")  (BUS)
 
     require("modules.love")(BUS)
 
