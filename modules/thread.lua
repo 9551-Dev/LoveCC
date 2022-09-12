@@ -65,6 +65,7 @@ return function(BUS)
             push   = function(this,value)
                 local id = generic.uuid4()
                 this.queue[#this.queue+1] = {value=value,id=id}
+                return id
             end,
             supply = function(this,value,timeout)
                 local id = generic.uuid4()
