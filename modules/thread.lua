@@ -24,12 +24,62 @@ return function(BUS)
                     this.started = true
                 end
             end,
-            wait      = function(this)
+            wait = function(this)
                 while coroutine.status(this.c) ~= "dead" do
                     generic.precise_sleep(0.01)
                 end
             end
-        },__tostring=function() return "LoveCC_Thread" end}
+        },__tostring=function() return "LoveCC_Thread" end},
+        channel={__index=object.new{
+            clear  = function(this) this.queue = {} end,
+            demand = function(this,timeout)
+                local timed_out = math.huge
+                if timeout then timed_out = os.epoch("utc") + timeout end
+
+                while #this.queue < 1 or os.epoch("utc") > timed_out do
+                    os.queueEvent("wait")
+                    os.pullEvent("wait")
+                end
+
+                local received = table.remove(this.queue,1)
+                this.push_ids[received.id] = true
+                return received.value
+
+            end,
+            getCount = function(this) return #this.queue end,
+            hasRead  = function(this,id) return not not this.pushed_ids[id] end,
+            peek     = function(this)
+                local v = this.queue[1]
+                if v then return v.value end
+                return nil
+            end,
+            performAtomic = function(this,func,...) return func(...) end,
+            pop           = function(this)
+                local received = table.remove(this.queue,1)
+                if received then
+                    this.push_ids[received.id] = true
+                    return received.value
+                end
+                return nil
+            end,
+            push   = function(this,value)
+                local id = generic.uuid4()
+                this.queue[#this.queue+1] = {value=value,id=id}
+            end,
+            supply = function(this,value,timeout)
+                local id = generic.uuid4()
+                this.queue[#this.queue+1] = {value=value,id=id}
+
+                local timed_out = math.huge
+                if timeout then timed_out = os.epoch("utc") + timeout end
+
+                while not this.push_ids[id] or os.epoch("utc") > timed_out do
+                    os.queueEvent("wait")
+                    os.pullEvent("wait")
+                end
+                return not (os.epoch("utc") > timed_out)
+            end
+        },__tostring=function() return "LoveCC_Chanel" end}
     }
 
     function thread.newThread(code)
@@ -47,23 +97,48 @@ return function(BUS)
 
         if func then
 
-            BUS.thread.coro[id] = {
+            BUS.thread.coro[id] = setmetatable({
                 c = coroutine.create(function(...)
                     coroutine.yield()
                     func(...)
                 end),
+                started=false,
+
                 obj_type="Thread",
                 stored_in=BUS.thread.coro,
                 under=id,
-                started=false,
-            }
+                object=BUS.thread.coro[id]
+            },objects.thread):__build()
 
-            local obj = setmetatable(BUS.thread.coro[id],objects.thread)
-            obj:__attach()
-            BUS.thread.coro[id].object = obj
-
-            return obj
+            return BUS.thread.coro[id]
         else return false,msg end
+    end
+
+    local function GET_CHANNEL(name)
+        if BUS.thread.channel[name] then
+            return BUS.thread.channel[name]
+        else
+            BUS.thread.channel[name] = setmetatable({
+                queue={},
+                push_ids={},
+
+                obj_type = "Channel",
+                stored_in = BUS.thread.channel,
+                under = name,
+                object = BUS.thread.channel[name]
+
+            },objects.channel):__build()
+            return BUS.thread.channel[name]
+        end
+    end
+
+    function thread.newChannel()
+        local id = generic.uuid4()
+        return GET_CHANNEL(id)
+    end
+
+    function thread.getChannel(name)
+        return GET_CHANNEL(name)
     end
 
     return thread

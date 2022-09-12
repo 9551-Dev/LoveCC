@@ -29,7 +29,7 @@ return {register_bus=function(ENV)
             textinput=true
         },
         thread={
-            chanel={},
+            channel={},
             coro={}
         },
         instance={}

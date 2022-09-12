@@ -1,6 +1,9 @@
 local function make_methods(child)
     return setmetatable({
-        __attach=function(obj) child = obj end,
+        __build=function(obj)
+            child = obj 
+            return obj
+        end,
         release = function()
             child.stored_in[child.under] = nil
         end,
