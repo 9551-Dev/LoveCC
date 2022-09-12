@@ -100,7 +100,7 @@ return function(BUS)
         stck.blending.mode = mode or "alpha"
         stck.blending.alphamode = alphamode or "alphamultiply"
     end
-    function graphics.getblendMode()
+    function graphics.getBlendMode()
         local stck = get_stack()
         return stck.blending.mode,stck.blending.alphamode
     end
