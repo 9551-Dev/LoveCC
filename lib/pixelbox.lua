@@ -340,6 +340,10 @@ function OBJECT:resize(w,h)
     self.emu = PIXELBOX.CREATE_TERM(self)
 end
 
+function OBJECT:get()
+    return self.term
+end
+
 function PIXELBOX.new(terminal,bg)
     EXPECT(1,terminal,"table")
     EXPECT(2,bg,"number","nil")

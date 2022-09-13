@@ -5,8 +5,12 @@ return {make=function(ENV,BUS,terminal)
     return coroutine.create(function()
         while true do
             local cx,cy = terminal.getSize()
-            if cx ~= last_x or cy ~= last_y then
-                BUS.graphics.display_source.reposition(1,1,cx,cy)
+            if cx ~= last_x or cy ~= last_y 
+                and BUS.window.resizable
+                and cx >= BUS.window.min_width
+                and cy >= BUS.window.min_height
+            then
+                BUS.graphics.display:get().reposition(1,1,cx,cy)
                 BUS.graphics.display:resize(cx,cy)
                 BUS.graphics.w = cx*2
                 BUS.graphics.h = cy*3

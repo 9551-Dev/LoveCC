@@ -28,7 +28,7 @@ return {make=function(ENV,BUS,args)
             if generic.events_with_cords[ev[1]] and not (ev[1] == "mouse_move" and ev[3] == nil) then
                 ev[3] = ev[3] - BUS.graphics.event_offset.x
                 ev[4] = ev[4] - BUS.graphics.event_offset.y
-            elseif ev[1] == "mouse_move" and ev[3] == nil then
+            elseif ev[1] == "mouse_move" and ev[3] == nil and BUS.window.allow_sleep then
                 BUS.window.active = false
             end
 

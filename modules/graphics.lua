@@ -1,7 +1,8 @@
 local graphics = {}
 
-local tbl = require("common.table_util")
-local clr = require("common.color_util")
+local tbl   = require("common.table_util")
+local clr   = require("common.color_util")
+local shape = require("core.graphics.shape")
 
 local UNPACK = table.unpack
 local CEIL = math.ceil
@@ -95,6 +96,32 @@ return function(BUS)
         end
     end
 
+    function graphics.line(...)
+        local lines = {...}
+        local stck = get_stack()
+        if type(lines[1]) == "table" then lines = lines[1] end
+        local c = tbl.deepcopy(stck.color)
+        local p_offset = CEIL((stck.line_width-1)/2+0.5)
+        local found_lut = tbl.createNDarray(1)
+        for i=1,#lines,4 do
+            for a=1,stck.line_width do for b=1,stck.line_width do
+                shape.get_line_points(
+                    lines[i],
+                    lines[i+1],
+                    lines[i+2],
+                    lines[i+3],
+                    function(x,y)
+                        local x,y = CEIL(x-p_offset+a-0.5),CEIL(y-p_offset+b-0.5)
+                        if not found_lut[x][y] then
+                            add_color_xy(x,y,c)
+                            found_lut[x][y] = true
+                        end
+                    end
+                )
+            end end
+        end
+    end
+
     function graphics.setBlendMode(mode,alphamode)
         local stck = get_stack()
         stck.blending.mode = mode or "alpha"
@@ -112,6 +139,14 @@ return function(BUS)
     function graphics.getPointSize()
         local stck = get_stack()
         return stck.point_size
+    end
+    function graphics.getLineWidth()
+        local stck = get_stack()
+        return stck.line_width
+    end
+    function graphics.setLineWidth(size)
+        local stck = get_stack()
+        stck.line_width = size
     end
 
     function graphics.translate(dx,dy)
@@ -131,6 +166,10 @@ return function(BUS)
     end
     function graphics.getStackDepth()
         return #stack
+    end
+
+    function graphics.getDimensions()
+        return BUS.graphics.w,BUS.graphics.h
     end
 
     return graphics

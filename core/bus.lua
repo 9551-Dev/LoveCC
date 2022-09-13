@@ -15,12 +15,26 @@ return {register_bus=function(ENV)
                     color={1,1,1,1},
                     blending={mode="alpha",alphamode="alphamultiply"},
                     point_size=1,
-                    translate={0,0}
+                    translate={0,0},
+                    line_width=1
                 }
             }
         },
         mouse={last_x=0,last_y=0},
         window={
+            fullscreen=true,
+            vsync=false,
+            msaa=0,
+            resizable=true,
+            borderless=true,
+            centered=false,
+            display=1,
+            min_width=0,
+            min_height=0,
+            allow_sleep=false,
+            maximized=true,
+            fs_type="desktop",
+
             active=true
         },
         keyboard={
