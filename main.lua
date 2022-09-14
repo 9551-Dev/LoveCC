@@ -13,13 +13,11 @@ local tudp_thread   = require("core.threads.tupd_thread")
 return function(ENV,libdir,...)
     local args = table.pack(...)
     local BUS = bus.register_bus(ENV)
-
-    handlers(ENV)
-
-    BUS.graphics.stack[BUS.graphics.stack.current_pos] = 
-        ENV.utils.table.deepcopy(BUS.graphics.stack.default)
+    handlers.attach(ENV)
+    BUS.instance.libdir = libdir
 
     local function start_execution(program,path,terminal,parent,ox,oy)
+
         local w,h = terminal.getSize()
         local ok = pcall(function()
             BUS.graphics.monitor = peripheral.getName(parent)
@@ -65,12 +63,20 @@ return function(ENV,libdir,...)
         end
     end
 
+    BUS.object.font = require("core.objects.font").add(BUS)
+
+    BUS.graphics.stack.default.font = BUS.object.font.new("resources/font.bdf",true)
+
+    BUS.graphics.stack[BUS.graphics.stack.current_pos] = 
+        ENV.utils.table.deepcopy(BUS.graphics.stack.default)
+
     ENV.love.timer    = require("modules.timer")   (BUS)
     ENV.love.event    = require("modules.event")   (BUS)
     ENV.love.graphics = require("modules.graphics")(BUS)
     ENV.love.keyboard = require("modules.keyboard")(BUS)
     ENV.love.thread   = require("modules.thread")  (BUS)
     ENV.love.window   = require("modules.window")  (BUS)
+    ENV.love.cc       = require("modules.cc")      (BUS)
 
     require("modules.love")(BUS)
 

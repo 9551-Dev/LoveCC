@@ -16,7 +16,7 @@ return {register_bus=function(ENV)
                     blending={mode="alpha",alphamode="alphamultiply"},
                     point_size=1,
                     translate={0,0},
-                    line_width=1
+                    line_width=1,
                 }
             }
         },
@@ -46,6 +46,7 @@ return {register_bus=function(ENV)
             channel={},
             coro={}
         },
-        instance={}
+        instance={},
+        object={}
     }
 end}

@@ -63,6 +63,7 @@ return function(BUS)
         end
     end
     function graphics.present()
+        clr.update_palette(BUS.graphics.display_source)
         for x,y in tbl.map_iterator(BUS.graphics.w,BUS.graphics.h) do
             local rgb = BUS.graphics.buffer[y][x]
             local c = clr.find_closest_color(rgb[1],rgb[2],rgb[3])
@@ -170,6 +171,45 @@ return function(BUS)
 
     function graphics.getDimensions()
         return BUS.graphics.w,BUS.graphics.h
+    end
+
+    function graphics.newFont(path)
+        return BUS.object.font.new(path)
+    end
+    function graphics.setFont(font)
+        local stck = get_stack()
+        stck.font = font
+    end
+    function graphics.getFont()
+        return tbl.deepcopy(get_stack().font)
+    end
+
+    function graphics.print(text,x,y)
+        local stck = get_stack()
+
+        local x,y = x or 0,y or 0
+        local color = stck.color
+
+        local font = stck.font
+        local height = font.meta.bounds.height
+        for c in tostring(text):gmatch(".") do
+            x = x + 1
+
+            local char = font[c]
+            for sx,sy in tbl.map_iterator(char.bounds.width,char.bounds.height) do
+                local cy = sy
+                if char.bounds.height < height then
+                    cy = sy + (height-char.bounds.height) - char.bounds.y
+                end
+                local px = x + sx - 2
+                local py = y + cy - 3
+                if char[sy][sx] then
+                    add_color_xy(px,py,color)
+                end
+            end
+
+            x = x + char.bounds.width
+        end
     end
 
     return graphics

@@ -1,7 +1,7 @@
-return function(ENV)
+return {attach=function(ENV)
     ENV.love.handlers = setmetatable({},
         {__index=function()
             return function()
         end
     end})
-end
+end}
