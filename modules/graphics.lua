@@ -202,7 +202,7 @@ return function(BUS)
                     cy = sy + (height-char.bounds.height) - char.bounds.y
                 end
                 local px = x + sx - 2
-                local py = y + cy - 3
+                local py = y + cy - 4
                 if char[sy][sx] then
                     add_color_xy(px,py,color)
                 end
