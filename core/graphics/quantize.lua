@@ -88,9 +88,13 @@ return {build=function(BUS)
             return parts
         end
 
-
         if #clrs > 16 then
-            return median_cut(clrs,{},0)
+            local cut = median_cut(clrs,{},0)
+            local res = BUS.cc.reserved_colors
+            for i=1,#res do
+                cut[#cut-i+1] = res[i]
+            end
+            return cut
         else return clrs end
     end}
 end}
