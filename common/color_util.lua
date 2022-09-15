@@ -24,6 +24,19 @@ function cUtil.update_palette(terminal)
     end
 end
 
+function cUtil.set_palette(pal)
+    color_cache = tbls.createNDarray(2)
+    for index,v in ipairs(pal) do
+        palette[2^(index-1)] = {v[1],v[2],v[3]}
+    end
+    _G.pal = palette
+    return {push=function(to)
+        for k,v in pairs(palette) do
+            to.setPaletteColor(k,v[1],v[2],v[3])
+        end
+    end}
+end
+
 function cUtil.find_closest_color(r,g,b)
     local n,result = 0,color_cache[r][g][b] or {}
     if not next(result) then

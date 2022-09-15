@@ -22,7 +22,7 @@ function lib_cmgr.start(ENV,toggle,thread_pointer,main_thread,...)
                 if not ENV.love.quit() then
                     e = "Terminated"
                 end
-            end
+            else e = "Terminated" end
         else
             if ev[1] == main_filter or not main_filter then
                 local ok,ret = coroutine.resume(main_thread,unpack_ev(ev))
@@ -57,6 +57,14 @@ function lib_cmgr.start(ENV,toggle,thread_pointer,main_thread,...)
             end
         end
     end
+
+    local disp =  ENV.love.cc.get_bus().graphics.display_source
+
+    for i=0,15 do
+        local c = 2^i
+        disp.setPaletteColor(c,term.nativePaletteColor(c))
+    end
+
     if toggle() then return false,e end
     return true
 end

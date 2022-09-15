@@ -3,11 +3,14 @@ local graphics = {}
 local tbl   = require("common.table_util")
 local clr   = require("common.color_util")
 local shape = require("core.graphics.shape")
+local quantize = require("core.graphics.quantize")
 
 local UNPACK = table.unpack
 local CEIL = math.ceil
 
 return function(BUS)
+
+    local quantizer = quantize.build(BUS)
 
     BUS.clr_instance = clr
 
@@ -63,13 +66,19 @@ return function(BUS)
         end
     end
     function graphics.present()
-        clr.update_palette(BUS.graphics.display_source)
+        local pal
+        if BUS.cc.quantize then
+            pal = clr.set_palette(quantizer.quantize())
+        else
+            clr.update_palette(BUS.graphics.display_source)
+        end
         for x,y in tbl.map_iterator(BUS.graphics.w,BUS.graphics.h) do
             local rgb = BUS.graphics.buffer[y][x]
             local c = clr.find_closest_color(rgb[1],rgb[2],rgb[3])
             BUS.graphics.display:set_pixel_raw(x,y,c)
         end
         BUS.graphics.display:push_updates()
+        if pal then pal.push(BUS.graphics.display_source) end
         BUS.graphics.display:draw()
     end
 

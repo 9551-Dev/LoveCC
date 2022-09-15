@@ -47,6 +47,11 @@ return {register_bus=function(ENV)
             coro={}
         },
         instance={},
-        object={}
+        object={},
+        cc={
+            quantize=false,
+            quantize_quality=50,
+            frame_time_min=1/13
+        }
     }
 end}
