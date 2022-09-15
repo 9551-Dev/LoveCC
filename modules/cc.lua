@@ -1,5 +1,7 @@
 local cc = {}
 
+local CEIL = math.ceil
+
 return function(BUS)
 
     function cc.get_bus()
@@ -10,12 +12,12 @@ return function(BUS)
         BUS.cc.quantize = enable
     end
 
-    function cc.quantize_quality(quality)
-        BUS.cc.quantize_quality = quality
-    end
-
     function cc.fps_limit(limit)
         BUS.cc.frame_time_min = 1/limit
+    end
+
+    function cc.clamp_color(color,limit)
+        return CEIL(color*limit)/limit
     end
 
     return cc

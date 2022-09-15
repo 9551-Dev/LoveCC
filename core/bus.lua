@@ -50,7 +50,6 @@ return {register_bus=function(ENV)
         object={},
         cc={
             quantize=false,
-            quantize_quality=50,
             frame_time_min=1/13
         }
     }

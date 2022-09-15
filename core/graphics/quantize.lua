@@ -1,90 +1,96 @@
-local tbl = require("common.table_util")
+local tbutil = require("common.table_util")
 
-local SQRT = math.sqrt
-local CEIL = math.ceil
+local MAX = math.max
+local MIN = math.min
 
 return {build=function(BUS)
     local graphics = BUS.graphics
 
-    local function get_distance(p1,p2)
-        return SQRT(
-            (p2[1]-p1[1])^2 +
-            (p2[2]-p1[2])^2 +
-            (p2[3]-p1[3])^2
-        )
+    local function get_most_channel(max,min)
+        local diffs = {}
+        for i=1,3 do
+            diffs[i] = {val=max[i]-min[i],ind=i}
+        end
+        table.sort(diffs,function(a,b) return a.val > b.val end)
+        return diffs[1].ind
     end
-    local function add_colors(p1,p2)
+
+    local function add_color(c1,c2)
         return {
-            p1[1] + p2[1],
-            p1[2] + p2[2],
-            p1[3] + p2[3],
-        }
-    end
-    local function get_avg(group)
-        local total = group.total
-        return {
-            group.avg[1]/total,
-            group.avg[2]/total,
-            group.avg[3]/total
+            c1[1] + c2[1],
+            c1[2] + c2[2],
+            c1[3] + c2[3],
         }
     end
 
-    local function round_256(c)
+    local function get_avg(total,count)
         return {
-            CEIL(c[1]*256)/256,
-            CEIL(c[2]*256)/256,
-            CEIL(c[3]*256)/256
+            total[1] / count,
+            total[2] / count,
+            total[3] / count
         }
-    end
-
-    local function compare(c1,c2)
-        return  c1[1] == c2[1]
-            and c1[2] == c2[2]
-            and c1[3] == c2[3]
     end
 
     return {quantize=function()
-        local centroids = {}
-
-        for i=1,16 do
-            local random_r = math.random()
-            local random_g = math.random()
-            local random_b = math.random()
-
-            centroids[i] = {random_r,random_g,random_b}
+        local clrs = {}
+        local clut = tbutil.createNDarray(2)
+        for x,y in tbutil.map_iterator(graphics.w,graphics.h) do
+            local c = graphics.buffer[y][x]
+            if not clut[c[1]][c[2]][c[3]] then
+                clrs[#clrs+1] = graphics.buffer[y][x]
+                clut[c[1]][c[2]][c[3]] = true
+            end
         end
 
-        local ret = {}
-        for i=1,BUS.cc.quantize_quality do
-            local groups = {}
-            local averages = {}
-            for i=1,16 do groups[centroids[i]] = {total=0,avg={0,0,0},index=i} end
-            for x,y in tbl.map_iterator(graphics.w,graphics.h) do
-                local c = graphics.buffer[y][x]
-                local distance = math.huge
-                local closest_centroid
-                for k,v in pairs(centroids) do
-                    local d = get_distance(c,v)
-                    if d < distance then
-                        closest_centroid = v
-                        distance = d
+        local function median_cut(tbl,parts,splited)
+            if splited < 4 then
+                local max = {
+                    -math.huge,
+                    -math.huge,
+                    -math.huge,
+                }
+                local min = {
+                    math.huge,
+                    math.huge,
+                    math.huge
+                }
+                local diffirences = tbutil.createNDarray(1)
+                for k,v in pairs(tbl) do
+                    for i=1,3 do
+                        max[i] = MAX(max[i],v[i])
+                        min[i] = MIN(min[i],v[i])
+                        diffirences[k][i] = v[i]
                     end
                 end
-                local centr = groups[closest_centroid]
-                centr.total = centr.total + 1
-                centr.avg   = add_colors(c,centr.avg)
-            end
-            for k,v in pairs(groups) do
-                if v.total > 0 then
-                    local avg = get_avg(v)
-                    averages[v.index] = avg
-                else
-                    averages[v.index] = {-1,-1,-1}
+                local mchan = get_most_channel(max,min)
+                table.sort(tbl,function(a,b)
+                    return a[mchan] > b[mchan]
+                end)
+
+                local split = {{},{}}
+
+                for i=1,#tbl do
+                    local index = math.ceil((i*2)/#tbl)
+                    local t = split[index]
+                    t[#t+1] = tbl[i]
                 end
+                median_cut(split[1],parts,splited+1)
+                median_cut(split[2],parts,splited+1)
+            else
+                local count = 0
+                local total = {0,0,0}
+                for k,v in pairs(tbl) do
+                    total = add_color(v,total)
+                    count = count + 1
+                end
+                parts[#parts+1] = get_avg(total,count)
             end
-            centroids = averages
-            ret = averages
+            return parts
         end
-        return ret
+
+
+        if #clrs > 16 then
+            return median_cut(clrs,{},0)
+        else return clrs end
     end}
 end}
