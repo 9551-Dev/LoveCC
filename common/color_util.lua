@@ -52,13 +52,15 @@ function cUtil.find_closest_color(r,g,b)
                     (v[1]-r)^2 +
                     (v[2]-g)^2 +
                     (v[3]-b)^2
-                ),  color=k
+                ),  color=k,
+                r=v[1],g=v[2],b=v[3]
             }
         end
         table.sort(result,function(a,b) return a.dist < b.dist end)
         color_cache[r][g][b] = result
     end
-    return result[1].color,result
+    local r = result[1]
+    return r.color,r.r,r.g,r.b
 end
 
 function cUtil.get_palette()

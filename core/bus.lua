@@ -58,8 +58,7 @@ return {register_bus=function(ENV)
         cc={
             quantize=false,
             dither=false,
-            dither_factor=15,
-            frame_time_min=1/13,
+            frame_time_min=1/20,
             reserved_colors={},
             reserved_spots={}
         }

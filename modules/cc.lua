@@ -16,10 +16,6 @@ return function(BUS)
         BUS.cc.dither = enable
     end
 
-    function cc.dither_factor(factor)
-        BUS.cc.dither_factor = factor
-    end
-
     function cc.fps_limit(limit)
         BUS.cc.frame_time_min = 1/limit
     end

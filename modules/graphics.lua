@@ -87,10 +87,10 @@ return function(BUS)
         else
             clr.update_palette(BUS.graphics.display_source)
         end
-        if BUS.cc.dither then ditherer.dither() end
         for x,y in tbl.map_iterator(BUS.graphics.w,BUS.graphics.h) do
             local rgb = BUS.graphics.buffer[y][x]
-            local c = clr.find_closest_color(rgb[1],rgb[2],rgb[3])
+            local c,r,g,b = clr.find_closest_color(rgb[1],rgb[2],rgb[3])
+            if BUS.cc.dither then ditherer.dither(rgb,r,g,b,x,y) end
             BUS.graphics.display:set_pixel_raw(x,y,c)
         end
         BUS.graphics.display:push_updates()
