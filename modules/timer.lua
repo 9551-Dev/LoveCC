@@ -2,6 +2,8 @@ local timer = {}
 local generic = require("common.generic")
 local is_craftos = _HOST:find("CraftOS%-PC")
 
+if is_craftos then config.set("mouse_move_throttle",1) end
+
 return function(BUS)
     function timer.step()
         BUS.timer.last_delta = BUS.timer.temp_delta
