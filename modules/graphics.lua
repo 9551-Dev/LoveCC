@@ -8,6 +8,7 @@ local dither = require("core.graphics.dither")
 
 local UNPACK = table.unpack
 local CEIL = math.ceil
+local FLOOR = math.floor
 
 return function(BUS)
 
@@ -42,6 +43,18 @@ return function(BUS)
             local bpos = BUS.graphics.buffer[y]
             bpos[x] = blend_colors(bpos[x],c)
         end
+    end
+
+    local function add_points_xy(LUT,dsize,x,y,c)
+        local p_offset = CEIL((dsize-1)/2+0.5)
+        for a=1,dsize do for b=1,dsize do
+            local px = CEIL(x-p_offset+a-0.5)
+            local py = CEIL(y-p_offset+b-0.5)
+            if not LUT[px][py] then
+                add_color_xy(px,py,c)
+                LUT[px][py]  = true
+            end
+        end end
     end
 
     function graphics.isActive() return BUS.window.active end
@@ -114,25 +127,60 @@ return function(BUS)
         local stck = get_stack()
         if type(lines[1]) == "table" then lines = lines[1] end
         local c = tbl.deepcopy(stck.color)
-        local p_offset = CEIL((stck.line_width-1)/2+0.5)
+        local lw = stck.line_width
         local found_lut = tbl.createNDarray(1)
         for i=1,#lines,4 do
-            for a=1,stck.line_width do for b=1,stck.line_width do
-                shape.get_line_points(
-                    lines[i],
-                    lines[i+1],
-                    lines[i+2],
-                    lines[i+3],
-                    function(x,y)
-                        local x,y = CEIL(x-p_offset+a-0.5),CEIL(y-p_offset+b-0.5)
-                        if not found_lut[x][y] then
-                            add_color_xy(x,y,c)
-                            found_lut[x][y] = true
-                        end
-                    end
-                )
-            end end
+            shape.get_line_points(
+                lines[i],
+                lines[i+1],
+                lines[i+2],
+                lines[i+3],
+                function(x,y)
+                    add_points_xy(found_lut,lw,x,y,c)
+                end
+            )
         end
+    end
+
+    function graphics.rectangle(mode,x,y,width,height)
+        local stck = get_stack()
+        local c = stck.color
+        local lw = stck.line_width
+        if mode == "fill" then
+            for xo,yo in tbl.map_iterator(width,height) do
+                add_color_xy(xo+x-1,yo+y-1,c)
+            end
+        elseif mode == "line" then
+            local set = tbl.createNDarray(1)
+            for xo=1,width do
+                add_points_xy(set,lw,x+xo-1,y,c)
+                add_points_xy(set,lw,x+xo-1,height+y-1,c)
+            end
+            for yo=1,height do
+                add_points_xy(set,lw,x,y+yo-1,c)
+                add_points_xy(set,lw,x+width-1,y+yo-1,c)
+            end
+        end
+    end
+
+    function graphics.ellipse(mode,x,y,radiusx,radiusy)
+        local stck = get_stack()
+        local c = stck.color
+        local lw = stck.line_width
+        if mode == "fill" then
+            shape.get_elipse_points(radiusx,radiusy,x,y,true,function(x,y)
+                add_color_xy(x,y,c)
+            end)
+        elseif mode == "line" then
+            local set = tbl.createNDarray(1)
+            shape.get_elipse_points(radiusx,radiusy,x,y,false,function(x,y)
+                add_points_xy(set,lw,x,y,c)
+            end)
+        end
+    end
+
+    function graphics.circle(mode,x,y,radius)
+        graphics.ellipse(mode,x,y,radius,radius)
     end
 
     function graphics.setBlendMode(mode,alphamode)
