@@ -199,7 +199,7 @@ return function(BUS)
     function graphics.print(text,x,y)
         local stck = get_stack()
 
-        local x,y = x or 0,y or 0
+        local x,y = x or 1,y or 1
         local color = stck.color
 
         local font = stck.font
