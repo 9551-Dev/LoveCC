@@ -12,6 +12,14 @@ return function(BUS)
         BUS.cc.quantize = enable
     end
 
+    function cc.dither(enable)
+        BUS.cc.dither = enable
+    end
+
+    function cc.dither_factor(factor)
+        BUS.cc.dither_factor = factor
+    end
+
     function cc.fps_limit(limit)
         BUS.cc.frame_time_min = 1/limit
     end
@@ -36,6 +44,20 @@ return function(BUS)
 
     function cc.remove_reserved_colors()
         BUS.cc.reserved_colors = {}
+    end
+
+    function cc.reserve_spot(n,r,g,b)
+        local sp = BUS.cc.reserved_spots
+        sp[#sp+1] = {2^n,{r,g,b}}
+    end
+
+    function cc.pop_reserved_spot()
+        local sp = BUS.cc.reserved_spots
+        sp[#sp] = nil
+    end
+
+    function cc.remove_reserved_spots()
+        BUS.cc.reserved_spots = {}
     end
 
     return cc

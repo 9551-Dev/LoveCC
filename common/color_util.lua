@@ -24,10 +24,16 @@ function cUtil.update_palette(terminal)
     end
 end
 
-function cUtil.set_palette(pal)
+function cUtil.set_palette(BUS,pal)
     color_cache = tbls.createNDarray(2)
     for index,v in ipairs(pal) do
-        palette[2^(index-1)] = {v[1],v[2],v[3]}
+        local i = 2^(index-1)
+        palette[i] = {v[1],v[2],v[3]}
+        for k,v in pairs(BUS.cc.reserved_spots) do
+            if v[1] == i then
+                palette[i] = v[2]
+            end
+        end
     end
     return {push=function(to)
         for k,v in pairs(palette) do

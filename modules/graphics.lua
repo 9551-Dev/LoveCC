@@ -4,6 +4,7 @@ local tbl   = require("common.table_util")
 local clr   = require("common.color_util")
 local shape = require("core.graphics.shape")
 local quantize = require("core.graphics.quantize")
+local dither = require("core.graphics.dither")
 
 local UNPACK = table.unpack
 local CEIL = math.ceil
@@ -11,6 +12,7 @@ local CEIL = math.ceil
 return function(BUS)
 
     local quantizer = quantize.build(BUS)
+    local ditherer  = dither  .build(BUS)
 
     BUS.clr_instance = clr
 
@@ -68,10 +70,11 @@ return function(BUS)
     function graphics.present()
         local pal
         if BUS.cc.quantize then
-            pal = clr.set_palette(quantizer.quantize())
+            pal = clr.set_palette(BUS,quantizer.quantize())
         else
             clr.update_palette(BUS.graphics.display_source)
         end
+        if BUS.cc.dither then ditherer.dither() end
         for x,y in tbl.map_iterator(BUS.graphics.w,BUS.graphics.h) do
             local rgb = BUS.graphics.buffer[y][x]
             local c = clr.find_closest_color(rgb[1],rgb[2],rgb[3])
