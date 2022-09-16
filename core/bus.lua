@@ -20,7 +20,14 @@ return {register_bus=function(ENV)
                 }
             }
         },
-        mouse={last_x=0,last_y=0},
+        mouse={
+            last_x=0,
+            last_y=0,
+            relative_mode=false,
+            grabbed=false,
+            visible=true,
+            held={}
+        },
         window={
             fullscreen=true,
             vsync=false,

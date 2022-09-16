@@ -76,6 +76,7 @@ return function(ENV,libdir,...)
     ENV.love.keyboard = require("modules.keyboard")(BUS)
     ENV.love.thread   = require("modules.thread")  (BUS)
     ENV.love.window   = require("modules.window")  (BUS)
+    ENV.love.mouse    = require("modules.mouse")   (BUS)
     ENV.love.cc       = require("modules.cc")      (BUS)
 
     require("modules.love")(BUS)
