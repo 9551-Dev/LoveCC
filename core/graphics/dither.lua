@@ -1,7 +1,6 @@
 return {build=function(BUS)
     local graphics = BUS.graphics
     local buff = graphics.buffer
-    end
 
     local types = {
         {x=1,  y=0, const = 7/16},
