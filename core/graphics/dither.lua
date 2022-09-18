@@ -2,15 +2,6 @@ return {build=function(BUS)
     local graphics = BUS.graphics
     local buff = graphics.buffer
 
-
-    local function sub_color(c1,r,g,b)
-        return {
-            c1[1] - r,
-            c1[2] - g,
-            c1[3] - b,
-        }
-    end
-
     local types = {
         {x=1,  y=0, const = 7/16},
         {x=-1, y=1, const = 3/16},
