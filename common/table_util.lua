@@ -25,7 +25,7 @@ function tbls.iterate_order(tbl,reversed)
     end)
     return function()
         indice = indice + 1
-        if tbl[keys[indice]] then return keys[indice],tbl[keys[indice]]
+        if keys[indice] and tbl[keys[indice]] then return keys[indice],tbl[keys[indice]]
         else return end
     end
 end
