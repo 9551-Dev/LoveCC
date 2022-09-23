@@ -8,14 +8,11 @@ local EXPECT = require("cc.expect").expect
 local PIXELBOX = {}
 local OBJECT = {}
 local api = {}
-local ALGO = {}
 local graphic = {}
 
 local CEIL  = math.ceil
 local FLOOR = math.floor
 local SQRT  = math.sqrt
-local MIN   = math.min
-local ABS   = math.abs
 local t_insert, t_unpack, t_sort, s_char, pairs = table.insert, table.unpack, table.sort, string.char, pairs
 
 local chars = "0123456789abcdef"
