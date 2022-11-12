@@ -8,7 +8,7 @@ local ls = {}
 local len = 0
 github_api.close()
 for k,v in pairs(list.tree) do
-    if v.type == "blob" and v.path:lower():match(".+%.lua") then
+    if v.type == "blob" and (v.path:lower():match(".+%.lua") or v.path:lower():match(".+%.bdf")) then
         ls["https://raw.githubusercontent.com/9551-Dev/LoveCC/main/"..v.path] = v.path
         len = len + 1
     end
